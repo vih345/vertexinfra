@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VERTEX | Soluções em TI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        vertex: {
+                            dark: {
+                                bg: '#0F172A',
+                                surface: '#1E293B',
+                                card: '#1E293B',
+                                border: '#334155',
+                                borderSoft: '#2A3A4F',
+                                text: '#F8FAFC',
+                                textMuted: '#CBD5E1',
+                                accent: '#B99CFF',
+                                accentSoft: 'rgba(185, 156, 255, 0.10)',
+                                accentBorder: '#B99CFF'
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        tech: ['Orbitron', 'sans-serif'],
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'glow': '0 0 15px rgba(185, 156, 255, 0.35)',
+                    },
+                    animation: {
+                        'robot-blink': 'robotBlink 4s infinite',
+                        'robot-hi': 'robotHi 0.6s ease-out'
+                    },
+                    keyframes: {
+                        robotBlink: {
+                            '0%, 46%, 54%, 100%': { opacity: 1 },
+                            '50%': { opacity: 0 }
+                        },
+                        robotHi: {
+                            '0%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(1.15)' },
+                            '100%': { transform: 'scale(1)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        :root {
+            --ink: #1b1d20;
+            --ink-deep: #08090a;
+            --surface: rgba(34, 35, 37, 0.88);
+            --surface-solid: #242528;
+            --line: rgba(150, 151, 158, 0.24);
+            --line-bright: rgba(216, 199, 255, 0.68);
+            --aqua: #b99cff;
+            --aqua-soft: rgba(185, 156, 255, 0.12);
+            --coral: #e0cfff;
+        }
+
+        body {
+            background:
+                radial-gradient(ellipse at 12% 8%, rgba(80, 80, 86, 0.12), transparent 38%),
+                radial-gradient(ellipse at 88% 34%, rgba(57, 58, 63, 0.1), transparent 34%),
+                linear-gradient(135deg, var(--ink) 0%, var(--ink-deep) 100%);
+            color: #f4fbfa;
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.34;
+            background-image: linear-gradient(rgba(185, 156, 255, 0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(185, 156, 255, 0.07) 1px, transparent 1px);
+            background-size: 46px 46px;
+            mask-image: linear-gradient(to bottom, black, transparent 86%);
+            z-index: -1;
+            animation: gridDrift 24s linear infinite;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            width: 52vw;
+            height: 52vw;
+            max-width: 680px;
+            max-height: 680px;
+            top: -22vw;
+            right: -16vw;
+            pointer-events: none;
+            border: 1px solid rgba(185, 156, 255, 0.14);
+            transform: rotate(28deg);
+            box-shadow: 0 0 0 34px rgba(185, 156, 255, 0.03), 0 0 0 68px rgba(185, 156, 255, 0.02);
+            z-index: -1;
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            backdrop-filter: blur(18px);
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.16);
+        }
+
+        .accent-text {
+            color: var(--aqua);
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--aqua), var(--coral), transparent);
+            opacity: 0.62;
+        }
+
+        .card {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(145deg, rgba(48, 48, 50, 0.9), rgba(18, 19, 20, 0.92));
+            border: 1px solid var(--line);
+            transition: all 0.3s ease;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            right: 10%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--coral), transparent);
+            opacity: 0.5;
+        }
+        .card:hover {
+            border-color: var(--line-bright);
+            background: linear-gradient(145deg, rgba(66, 61, 73, 0.92), rgba(28, 28, 30, 0.94));
+            transform: translateY(-5px);
+            box-shadow: 0 18px 38px rgba(0, 0, 0, 0.46), 0 0 24px rgba(185, 156, 255, 0.13);
+        }
+        .service-card { cursor: pointer; }
+        .service-card::after {
+            content: 'ABRIR PROJETO  →';
+            display: block;
+            margin-top: 1.25rem;
+            color: rgba(185, 156, 255, 0.7);
+            font: 600 0.65rem/1 'Space Grotesk', sans-serif;
+            letter-spacing: 0.12em;
+            opacity: 0;
+            transform: translateY(5px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+        .service-card:hover::after, .service-card:focus-visible::after { opacity: 1; transform: translateY(0); }
+
+        .project-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 80;
+            display: grid;
+            place-items: center;
+            padding: 1rem;
+            background: rgba(4, 3, 7, 0.78);
+            backdrop-filter: blur(12px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+        .project-modal.is-open { opacity: 1; pointer-events: auto; }
+        .project-window {
+            position: relative;
+            width: min(680px, 100%);
+            max-height: min(700px, 90vh);
+            overflow: auto;
+            background: linear-gradient(145deg, #302d38, #151419 72%);
+            border: 1px solid rgba(185, 156, 255, 0.5);
+            border-radius: 18px;
+            box-shadow: 0 28px 80px rgba(0, 0, 0, 0.55), 0 0 45px rgba(185, 156, 255, 0.12);
+            transform: translateY(18px) scale(0.97);
+            transition: transform 0.3s ease;
+        }
+        .project-modal.is-open .project-window { transform: translateY(0) scale(1); }
+        .project-close { position: absolute; top: 1rem; right: 1rem; z-index: 2; width: 34px; height: 34px; border: 1px solid rgba(185, 156, 255, 0.32); border-radius: 50%; color: #d8c7ff; background: rgba(10, 8, 14, 0.55); }
+        .project-visual { position: relative; height: 250px; overflow: hidden; border-bottom: 1px solid rgba(185, 156, 255, 0.2); background: radial-gradient(circle at 50% 55%, rgba(116, 77, 173, 0.25), transparent 45%), #111016; }
+        .project-grid { position: absolute; inset: 0; opacity: 0.3; background-image: linear-gradient(rgba(185,156,255,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(185,156,255,0.12) 1px, transparent 1px); background-size: 28px 28px; }
+        .project-device { position: absolute; left: 50%; top: 50%; display: grid; place-items: center; width: 190px; height: 125px; border: 2px solid var(--aqua); border-radius: 10px; background: linear-gradient(145deg, #3e3850, #111016); box-shadow: 0 0 28px rgba(185, 156, 255, 0.22); transform: translate(-50%, -50%); color: #e0cfff; font-size: 3rem; }
+        .project-device::after { content: ''; position: absolute; inset: 16px; border: 1px solid rgba(224, 207, 255, 0.45); border-radius: 5px; }
+        .project-device .fa { position: relative; z-index: 1; }
+        .project-device.is-network { width: 150px; height: 90px; border-radius: 50%; }
+        .project-device.is-network::before, .project-device.is-network::after { border-radius: 50%; inset: -35px; border: 1px solid rgba(185,156,255,0.3); }
+        .project-device.is-network::after { inset: -65px; }
+        .project-device.is-data { width: 120px; height: 150px; }
+        .network-config { display: none; position: absolute; left: 50%; top: 50%; width: min(390px, 82%); padding: 1rem; border: 1px solid rgba(185,156,255,0.48); border-radius: 10px; background: rgba(20,17,27,0.92); box-shadow: 0 0 28px rgba(185,156,255,0.16); transform: translate(-50%, -50%) scale(0.94); opacity: 0; transition: opacity 0.35s ease, transform 0.5s ease; }
+        .network-config-header { display: flex; align-items: center; gap: 0.55rem; color: #e0cfff; font: 600 0.72rem/1 'Space Grotesk', sans-serif; letter-spacing: 0.08em; text-transform: uppercase; }
+        .network-config-header span { width: 7px; height: 7px; border-radius: 50%; background: var(--aqua); box-shadow: 0 0 10px var(--aqua); }
+        .network-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem; margin-top: 0.85rem; }
+        .network-field { padding: 0.55rem 0.65rem; border: 1px solid rgba(185,156,255,0.2); border-radius: 5px; background: rgba(255,255,255,0.035); }
+        .network-field small { display: block; color: #978fa6; font-size: 0.58rem; margin-bottom: 0.3rem; }
+        .network-field strong { color: #f5f0ff; font: 600 0.72rem/1 'Space Grotesk', sans-serif; letter-spacing: 0.04em; }
+        .network-signal { position: absolute; left: 50%; bottom: 20px; color: var(--aqua); font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; transform: translateX(-50%); opacity: 0; transition: opacity 0.5s ease; }
+        .project-modal.is-open .network-config { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        .project-modal.is-open .network-signal { opacity: 1; }
+        .project-visual.is-networking .project-device { display: none; }
+        .project-visual.is-networking .network-config { display: block; }
+        .project-info { padding: 1.5rem; }
+        .project-actions { display: flex; align-items: center; gap: 0.7rem; margin-top: 1.25rem; }
+        .project-voice { display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem; min-height: 38px; padding: 0.6rem 0.85rem; border: 1px solid rgba(185,156,255,0.35); border-radius: 8px; color: #e0cfff; background: rgba(185,156,255,0.08); font: 600 0.68rem/1 'Space Grotesk', sans-serif; letter-spacing: 0.06em; text-transform: uppercase; transition: background 0.2s ease, border-color 0.2s ease; }
+        .project-voice:hover { border-color: var(--aqua); background: rgba(185,156,255,0.16); }
+        .project-voice.is-speaking { border-color: var(--aqua); color: var(--aqua); }
+        .welcome-voice { display: inline-flex; align-items: center; gap: 0.35rem; margin-top: 0.35rem; padding: 0; border: 0; color: var(--aqua); background: transparent; font-size: 0.62rem; cursor: pointer; }
+        .welcome-voice:hover { color: #e0cfff; text-decoration: underline; }
+        .welcome-voice.is-speaking { color: #e0cfff; }
+        .project-info h4 { color: #f8f5ff; font: 700 1.3rem/1.2 'Space Grotesk', sans-serif; }
+        .project-status { display: inline-flex; align-items: center; gap: 0.45rem; margin-top: 0.55rem; color: var(--aqua); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; }
+        .project-progress { height: 5px; margin-top: 1.25rem; overflow: hidden; border-radius: 99px; background: rgba(255,255,255,0.08); }
+        .project-progress span { display: block; width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #7655b8, var(--aqua)); transition: width 2.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .project-modal.is-open .project-progress span { width: 100%; }
+
+        .btn-primary {
+            background: linear-gradient(135deg, rgba(225, 187, 104, 0.2), rgba(245, 216, 144, 0.08));
+            border: 1px solid var(--aqua);
+            color: var(--aqua);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, rgba(225, 187, 104, 0.3), rgba(245, 216, 144, 0.14));
+            box-shadow: 0 0 20px rgba(225, 187, 104, 0.2);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(195, 218, 215, 0.34);
+            color: #E2E8F0;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            border-color: var(--aqua);
+            color: var(--aqua);
+        }
+
+        .font-tech { font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.025em; }
+        h2.font-tech { letter-spacing: -0.035em; }
+        .text-white { color: #f4fbfa !important; }
+        .accent-text { color: var(--aqua); }
+        .text-slate-300 { color: #c4d9d7 !important; }
+        .text-slate-400 { color: #8eadaa !important; }
+        .border-slate-700 { border-color: var(--line) !important; }
+
+        ::selection { background: rgba(225, 187, 104, 0.3); color: #ffffff; }
+        :focus-visible {
+            outline: 2px solid var(--coral);
+            outline-offset: 4px;
+        }
+
+        header { padding: 12px 16px 0; }
+        header > .panel,
+        header .panel { border-radius: 16px; }
+        header .container { max-width: 1180px; }
+        header nav a {
+            position: relative;
+            padding: 8px 0;
+            color: #b5cbc9;
+            transition: color 0.25s ease;
+        }
+        header nav a::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 100%;
+            bottom: 0;
+            height: 2px;
+            background: var(--coral);
+            transition: right 0.25s ease;
+        }
+        header nav a:hover { color: #f4fbfa; }
+        header nav a:hover::after { right: 0; }
+
+        main { overflow: hidden; }
+        main { position: relative; z-index: 1; }
+        .workbot {
+            position: fixed;
+            z-index: 0;
+            top: 34%;
+            right: 22vw;
+            width: 210px;
+            height: 280px;
+            opacity: 0.2;
+            pointer-events: none;
+            filter: drop-shadow(0 0 28px rgba(225, 187, 104, 0.28));
+            animation: botFloat 7s ease-in-out infinite;
+        }
+        .workbot-head {
+            position: absolute;
+            top: 12px;
+            left: 56px;
+            width: 98px;
+            height: 78px;
+            border: 2px solid var(--aqua);
+            border-radius: 22px 22px 16px 16px;
+            background: linear-gradient(145deg, rgba(185, 156, 255, 0.22), rgba(25, 25, 25, 0.82));
+        }
+        .workbot-head::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            right: 20px;
+            top: 28px;
+            height: 12px;
+            border: 1px solid var(--coral);
+            border-radius: 10px;
+            box-shadow: inset 28px 0 0 rgba(216, 199, 255, 0.65), inset -28px 0 0 rgba(216, 199, 255, 0.65);
+        }
+        .workbot-head::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -18px;
+            width: 1px;
+            height: 17px;
+            background: var(--aqua);
+            box-shadow: 0 0 8px var(--aqua);
+        }
+        .workbot-body {
+            position: absolute;
+            top: 111px;
+            left: 42px;
+            width: 126px;
+            height: 122px;
+            border: 2px solid var(--aqua);
+            border-radius: 28px 28px 14px 14px;
+            background: linear-gradient(155deg, rgba(75, 67, 50, 0.38), rgba(17, 18, 19, 0.85));
+        }
+        .workbot-body::before {
+            content: '';
+            position: absolute;
+            inset: 24px 38px;
+            border: 1px solid var(--coral);
+            border-radius: 8px;
+            box-shadow: inset 0 0 0 5px rgba(185, 156, 255, 0.1);
+        }
+        .workbot-arm {
+            position: absolute;
+            top: 128px;
+            width: 28px;
+            height: 105px;
+            border: 2px solid var(--aqua);
+            border-radius: 16px;
+            background: rgba(185, 156, 255, 0.1);
+            transform-origin: top center;
+        }
+        .workbot-arm.left { left: 18px; transform: rotate(19deg); animation: botWorkLeft 2.8s ease-in-out infinite; }
+        .workbot-arm.right { right: 18px; transform: rotate(-25deg); animation: botWorkRight 2.8s ease-in-out infinite; }
+        .workbot-console {
+            position: absolute;
+            right: -14px;
+            bottom: 14px;
+            width: 88px;
+            height: 56px;
+            border: 1px solid var(--coral);
+            border-radius: 6px;
+            background: rgba(17, 18, 19, 0.92);
+            transform: rotate(-8deg);
+        }
+        .workbot-console::after {
+            content: '';
+            position: absolute;
+            left: 12px;
+            right: 12px;
+            top: 13px;
+            height: 2px;
+            background: var(--aqua);
+            box-shadow: 0 10px 0 rgba(185, 156, 255, 0.5), 0 20px 0 rgba(185, 156, 255, 0.3);
+            animation: consoleScan 1.8s linear infinite;
+        }
+        .testimonial-area { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr); gap: 1.5rem; align-items: start; }
+        .testimonial-form { order: -1; border-color: rgba(225, 187, 104, 0.36); }
+        .testimonial-form input, .testimonial-form textarea {
+            width: 100%;
+            border: 1px solid rgba(195, 178, 133, 0.28);
+            border-radius: 8px;
+            background: rgba(10, 11, 12, 0.58);
+            color: #f4fbfa;
+            padding: 0.75rem 0.85rem;
+            font: inherit;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+        .testimonial-form textarea { min-height: 130px; resize: vertical; }
+        .testimonial-form input:focus, .testimonial-form textarea:focus { outline: none; border-color: var(--aqua); box-shadow: 0 0 0 3px rgba(225, 187, 104, 0.1); }
+        .testimonial-form label { display: block; color: #d3d0c7; font-size: 0.75rem; margin-bottom: 0.4rem; }
+        .testimonial-form-status { min-height: 1.25rem; color: var(--aqua); font-size: 0.75rem; }
+        @keyframes botFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+        @keyframes botWorkLeft { 0%, 100% { transform: rotate(19deg); } 50% { transform: rotate(5deg); } }
+        @keyframes botWorkRight { 0%, 100% { transform: rotate(-25deg); } 50% { transform: rotate(-8deg); } }
+        @keyframes consoleScan { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
+        #inicio { position: relative; }
+        #inicio::before {
+            content: 'VERTEX / SYSTEMS';
+            position: absolute;
+            top: 12%;
+            right: -4%;
+            color: rgba(225, 187, 104, 0.12);
+            font: 700 clamp(4rem, 12vw, 10rem)/1 'Space Grotesk', sans-serif;
+            letter-spacing: 0.02em;
+            transform: rotate(-90deg);
+            transform-origin: right top;
+            pointer-events: none;
+        }
+        #inicio h2 { text-wrap: balance; }
+        #inicio h2 .accent-text {
+            color: var(--aqua);
+            text-shadow: 0 0 30px rgba(225, 187, 104, 0.22);
+        }
+        #inicio .grid.grid-cols-3 > div {
+            background: rgba(12, 43, 51, 0.48);
+            border-color: rgba(225, 187, 104, 0.2);
+            transition: border-color 0.25s ease, transform 0.25s ease, background 0.25s ease;
+        }
+        #inicio .grid.grid-cols-3 > div:hover {
+            background: rgba(16, 61, 68, 0.62);
+            border-color: var(--line-bright);
+            transform: translateY(-3px);
+        }
+
+        section h3 { letter-spacing: 0.08em; }
+        section > .container { position: relative; z-index: 1; }
+        .card, .faq-item, #sobre .panel { border-radius: 14px !important; }
+        .card { min-height: 100%; }
+        .card > div:first-child {
+            box-shadow: inset 0 0 0 1px rgba(225, 187, 104, 0.05), 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        .card h4 { letter-spacing: 0.045em; }
+        .faq-item { transition: border-color 0.25s ease, background 0.25s ease; }
+        .faq-item:hover { border-color: var(--line-bright) !important; }
+        .faq-item button { min-height: 56px; }
+
+        #aiAssistant { filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.2)); }
+        #aiAssistant > .panel { border-color: rgba(225, 187, 104, 0.38); }
+        #aiAssistant .chat-ai {
+            background: rgba(42, 42, 44, 0.94);
+            border-color: rgba(205, 181, 119, 0.3);
+            line-height: 1.55;
+        }
+        #aiAssistant .chat-user {
+            background: rgba(225, 187, 104, 0.14);
+            border-color: rgba(225, 187, 104, 0.52);
+        }
+        #aiAssistant input {
+            background: rgba(3, 18, 25, 0.7) !important;
+            border-color: rgba(145, 190, 190, 0.3) !important;
+        }
+        #aiAssistant input::placeholder { color: #78908f; }
+        .quick-btn { transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease; }
+        .quick-btn:hover { border-color: var(--aqua); color: #e9fffc; }
+
+        footer { background: rgba(4, 16, 22, 0.86) !important; backdrop-filter: blur(16px); }
+
+        @media (max-width: 767px) {
+            header { padding: 8px 8px 0; }
+            header .panel { border-radius: 12px; }
+            #inicio { min-height: auto; padding-top: 5.5rem; padding-bottom: 5rem; }
+            #inicio::before { display: none; }
+            #inicio .grid.grid-cols-3 { gap: 0.5rem; }
+            #inicio .grid.grid-cols-3 > div { padding: 0.75rem 0.4rem; }
+            #inicio .grid.grid-cols-3 .font-tech { font-size: 1rem; }
+            #inicio .grid.grid-cols-3 .text-xs { font-size: 0.65rem; }
+            #aiAssistant { bottom: 3.25rem; left: 0.75rem; right: 0.75rem; }
+            #aiAssistant .h-72 { height: 9rem; }
+            .workbot { top: 42%; right: -24px; transform: scale(0.7); opacity: 0.11; }
+            .testimonial-area { grid-template-columns: 1fr; }
+            .network-fields { gap: 0.4rem; }
+            footer { font-size: 0.6rem; line-height: 1.35; padding: 0.55rem 0.75rem; }
+        }
+
+        .text-yellow-400 { color: #d8c7ff !important; }
+        .border-yellow-500\/30 { border-color: rgba(185, 156, 255, 0.3) !important; }
+        .bg-yellow-500\/10 { background-color: rgba(185, 156, 255, 0.1) !important; }
+        .workbot { filter: drop-shadow(0 0 28px rgba(185, 156, 255, 0.3)); }
+        #aiAssistant .chat-ai { background: rgba(42, 42, 44, 0.94); border-color: rgba(185, 156, 255, 0.28); }
+        #aiAssistant .chat-user { background: rgba(185, 156, 255, 0.14); border-color: rgba(185, 156, 255, 0.52); }
+        .ai-face { background: radial-gradient(circle at 35% 25%, rgba(255,255,255,0.92), rgba(185,156,255,0.95)); border-color: rgba(185,156,255,0.8); box-shadow: 0 0 16px rgba(185,156,255,0.5); }
+        .ai-eye, .ai-mouth { background: #160d22; }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+        }
+
+        .status-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: var(--aqua);
+            box-shadow: 0 0 8px var(--aqua);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%,100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .chat-user {
+            background: rgba(225, 187, 104, 0.12);
+            border: 1px solid var(--aqua);
+            border-radius: 16px 16px 4px 16px;
+        }
+        .chat-ai {
+            background: #1E293B;
+            border: 1px solid #475569;
+            border-radius: 16px 16px 16px 4px;
+        }
+
+        .scroll-chat::-webkit-scrollbar { width: 6px; }
+        .scroll-chat::-webkit-scrollbar-track { background: #0F172A; }
+        .scroll-chat::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+
+        .quick-btn {
+            font-size: 11px;
+            padding: 5px 10px;
+            border-radius: 12px;
+            white-space: nowrap;
+            cursor: pointer;
+            background: rgba(185, 156, 255, 0.08);
+            border: 1px solid rgba(225, 187, 104, 0.25);
+            color: var(--aqua);
+        }
+        .quick-btn:hover {
+            background: rgba(225, 187, 104, 0.18);
+        }
+
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+        }
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .faq-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+        }
+        .faq-item.open .faq-content {
+            max-height: 500px;
+        }
+        .faq-item.open .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Rostinho / Robô da IA */
+        .ai-face {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 25%, rgba(255,255,255,0.92), rgba(185,156,255,0.95));
+            border: 2px solid rgba(185,156,255,0.8);
+            box-shadow: 0 0 16px rgba(185,156,255,0.5);
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .ai-face:hover {
+            transform: scale(1.08);
+        }
+
+        .ai-face:active {
+            transform: scale(0.95);
+        }
+
+        .ai-face-eyes {
+            position: absolute;
+            top: 38%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 22px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .ai-eye {
+            width: 9px;
+            height: 9px;
+            background: #0F172A;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .ai-eye::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .ai-mouth {
+            position: absolute;
+            bottom: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 6px;
+            border-radius: 0 0 12px 12px;
+            background: #0F172A;
+        }
+
+        .ai-face.clicked {
+            animation: robotHi 0.6s ease-out;
+        }
+
+        .ai-face.clicked .ai-eye {
+            animation: robotBlink 0.6s ease-out;
+        }
+
+        .build-station {
+            position: relative;
+            width: 292px;
+            height: 292px;
+            border: 0;
+            background: transparent;
+            cursor: pointer;
+            color: var(--aqua);
+        }
+        .build-station::before {
+            content: '';
+            position: absolute;
+            inset: 28%;
+            border-radius: 50%;
+            background: rgba(225, 187, 104, 0.08);
+            filter: blur(24px);
+            transition: transform 0.8s ease, opacity 0.8s ease;
+        }
+        .build-station:focus-visible { outline-offset: 10px; }
+        .build-orbit {
+            position: absolute;
+            inset: 18px;
+            border: 1px solid rgba(185, 156, 255, 0.18);
+            border-radius: 50%;
+            transition: transform 0.8s ease, border-color 0.8s ease;
+        }
+        .build-orbit::after {
+            content: '';
+            position: absolute;
+            inset: 18px;
+            border: 1px dashed rgba(185, 156, 255, 0.18);
+            border-radius: 50%;
+        }
+        .build-core {
+            position: absolute;
+            inset: 77px;
+            border: 1px solid rgba(185, 156, 255, 0.6);
+            border-radius: 18px;
+            background: linear-gradient(145deg, #4b4434, #171719 72%);
+            box-shadow: 0 0 30px rgba(185, 156, 255, 0.12), inset 0 0 20px rgba(0, 0, 0, 0.45);
+            transition: opacity 0.35s ease, transform 0.5s ease;
+        }
+        .build-core::before {
+            content: '';
+            position: absolute;
+            width: 52px;
+            height: 52px;
+            left: 50%;
+            top: 50%;
+            border: 1px solid var(--aqua);
+            border-radius: 8px;
+            transform: translate(-50%, -50%);
+            box-shadow: inset 0 0 0 7px rgba(185, 156, 255, 0.08), 0 0 18px rgba(185, 156, 255, 0.18);
+        }
+        .build-core::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            left: 50%;
+            top: 50%;
+            border-radius: 50%;
+            background: var(--aqua);
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 12px var(--aqua);
+        }
+        .assembly-part {
+            position: absolute;
+            z-index: 2;
+            opacity: 0;
+            transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s ease;
+        }
+        .assembly-case { transition-delay: 0.08s; }
+        .assembly-board { transition-delay: 0.18s; }
+        .assembly-memory { transition-delay: 0.28s; }
+        .assembly-monitor { transition-delay: 0.38s; }
+        .assembly-case {
+            width: 75px;
+            height: 118px;
+            right: 25px;
+            bottom: 45px;
+            border: 1px solid var(--aqua);
+            border-radius: 7px;
+            background: linear-gradient(110deg, #333238, #111214);
+            transform: translate(50px, 40px) rotate(9deg);
+        }
+        .assembly-case::after {
+            content: '';
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            left: 10px;
+            top: 12px;
+            border-radius: 50%;
+            background: var(--aqua);
+            box-shadow: 0 14px 0 rgba(185, 156, 255, 0.45);
+        }
+        .assembly-board {
+            width: 84px;
+            height: 58px;
+            left: 25px;
+            top: 53px;
+            border: 1px solid var(--aqua);
+            border-radius: 5px;
+            background: #242b29;
+            transform: translate(-55px, -32px) rotate(-18deg);
+        }
+        .assembly-board::after {
+            content: '';
+            position: absolute;
+            inset: 12px 18px;
+            border: 1px solid rgba(245, 216, 144, 0.7);
+        }
+        .assembly-memory {
+            width: 58px;
+            height: 13px;
+            left: 42px;
+            bottom: 61px;
+            border: 1px solid var(--coral);
+            border-radius: 3px;
+            background: repeating-linear-gradient(90deg, #a78343 0 5px, #332b1b 5px 9px);
+            transform: translate(-40px, 45px) rotate(14deg);
+        }
+        .assembly-monitor {
+            width: 62px;
+            height: 45px;
+            right: 39px;
+            top: 39px;
+            border: 1px solid var(--coral);
+            border-radius: 5px;
+            background: #15191a;
+            transform: translate(60px, -35px) rotate(14deg);
+        }
+        .assembly-monitor::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 4px;
+            left: 50%;
+            bottom: -8px;
+            transform: translateX(-50%);
+            background: var(--coral);
+        }
+        .assembly-label {
+            position: absolute;
+            left: 50%;
+            bottom: 17px;
+            transform: translateX(-50%);
+            width: max-content;
+            color: #a9a397;
+            font: 600 10px/1 'Space Grotesk', sans-serif;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+        .build-station:hover .build-orbit,
+        .build-station.is-building .build-orbit { border-color: rgba(245, 216, 144, 0.5); transform: scale(1.04) rotate(8deg); }
+        .build-station:hover::before,
+        .build-station.is-building::before { transform: scale(1.35); opacity: 0.8; }
+        .build-station.is-building .build-core { opacity: 0.28; transform: scale(0.82); }
+        .build-station.is-building .assembly-part { opacity: 1; transform: translate(0, 0) rotate(0); }
+        .build-station.is-building .assembly-label { color: var(--aqua); }
+        .build-station.is-complete .build-core { opacity: 0.9; transform: scale(0.92); }
+        .build-station.is-complete .assembly-label::after { content: '  /  PRONTO'; }
+
+        @keyframes gridDrift {
+            from { background-position: 0 0, 0 0; }
+            to { background-position: 46px 46px, 46px 46px; }
+        }
+
+        @media (max-width: 767px) {
+            .build-station { width: 250px; height: 250px; }
+            .build-core { inset: 65px; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Cabeçalho -->
+    <header class="fixed top-0 left-0 right-0 z-50">
+        <div class="panel border-b border-slate-700">
+            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-cyan-500/10 border border-cyan-400/40 shadow-[0_0_10px_rgba(34,211,238,0.2)]">
+                        <i class="fa fa-bolt accent-text text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-tech text-xl font-bold tracking-wide accent-text">VERTEX</h1>
+                        <p class="text-[10px] text-slate-400 tracking-widest">SOLUÇÕES EM TI</p>
+                    </div>
+                </div>
+
+                <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
+                    <a href="#inicio" class="hover:text-cyan-400 transition-colors">INÍCIO</a>
+                    <a href="#sobre" class="hover:text-cyan-400 transition-colors">SOBRE</a>
+                    <a href="#servicos" class="hover:text-cyan-400 transition-colors">SERVIÇOS</a>
+                    <a href="#faq" class="hover:text-cyan-400 transition-colors">DÚVIDAS</a>
+                    <a href="#depoimentos" class="hover:text-cyan-400 transition-colors">CLIENTES</a>
+                    <a href="#contato" class="hover:text-cyan-400 transition-colors">CONTATO</a>
+                </nav>
+
+                <div class="flex items-center gap-3">
+                    <button id="btnMenu" class="md:hidden text-xl text-slate-400">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu Mobile -->
+        <div id="menuMobile" class="panel border-t border-slate-700 hidden md:hidden">
+            <div class="container mx-auto px-4 py-3 flex flex-col gap-3 text-sm text-slate-300">
+                <a href="#inicio" class="py-2 hover:text-cyan-400 border-b border-slate-700">INÍCIO</a>
+                <a href="#sobre" class="py-2 hover:text-cyan-400 border-b border-slate-700">SOBRE</a>
+                <a href="#servicos" class="py-2 hover:text-cyan-400 border-b border-slate-700">SERVIÇOS</a>
+                <a href="#faq" class="py-2 hover:text-cyan-400 border-b border-slate-700">DÚVIDAS</a>
+                <a href="#depoimentos" class="py-2 hover:text-cyan-400 border-b border-slate-700">CLIENTES</a>
+                <a href="#contato" class="py-2 hover:text-cyan-400">CONTATO</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="workbot" aria-hidden="true">
+        <div class="workbot-head"></div>
+        <div class="workbot-body"></div>
+        <div class="workbot-arm left"></div>
+        <div class="workbot-arm right"></div>
+        <div class="workbot-console"></div>
+    </div>
+
+    <main class="pt-20 pb-40">
+
+        <!-- Início -->
+        <section id="inicio" class="min-h-[90vh] flex items-center py-16 fade-in-section">
+            <div class="container mx-auto px-4">
+                <div class="grid md:grid-cols-2 gap-10 items-center">
+                    <div class="space-y-6">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-500/20 text-xs text-slate-300 bg-slate-800/50">
+                            <span class="status-dot"></span> SISTEMA ONLINE
+                        </div>
+
+                        <h2 class="font-tech text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-white">
+                            TECNOLOGIA DE<br>
+                            <span class="accent-text">ALTO NÍVEL</span>
+                        </h2>
+
+                        <p class="text-base text-slate-300 max-w-xl leading-relaxed">
+                            Soluções completas em TI para sua empresa. Rollout, montagem de equipamentos, configuração de redes, manutenção e recuperação de arquivos com excelência e confiança.
+                        </p>
+
+                        <div class="flex flex-wrap gap-4 pt-2">
+                            <a href="#servicos" class="btn-primary px-7 py-2.5 rounded-lg text-sm font-medium">
+                                VER SERVIÇOS
+                            </a>
+                            <a href="#contato" class="btn-secondary px-7 py-2.5 rounded-lg text-sm font-medium">
+                                FALAR CONOSCO
+                            </a>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-4 pt-6">
+                            <div class="rounded-lg border border-slate-700 p-4 text-center bg-slate-800/40">
+                                <p class="font-tech text-xl accent-text">99.9%</p>
+                                <p class="text-xs text-slate-400 mt-1">Disponibilidade</p>
+                            </div>
+                            <div class="rounded-lg border border-slate-700 p-4 text-center bg-slate-800/40">
+                                <p class="font-tech text-xl accent-text">24h</p>
+                                <p class="text-xs text-slate-400 mt-1">Atendimento</p>
+                            </div>
+                            <div class="rounded-lg border border-slate-700 p-4 text-center bg-slate-800/40">
+                                <p class="font-tech text-xl accent-text">5+</p>
+                                <p class="text-xs text-slate-400 mt-1">Anos de Experiência</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center">
+                        <div class="relative w-64 h-64 md:w-72 md:h-72">
+                            <div class="absolute inset-0 rounded-full border border-cyan-500/20"></div>
+                            <div class="absolute inset-8 rounded-full border border-cyan-500/10"></div>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button id="buildStation" class="build-station" type="button" aria-label="Montar computador" aria-pressed="false">
+                                    <span class="build-orbit" aria-hidden="true"></span>
+                                    <span class="build-core" aria-hidden="true"></span>
+                                    <span class="assembly-part assembly-case" aria-hidden="true"></span>
+                                    <span class="assembly-part assembly-board" aria-hidden="true"></span>
+                                    <span class="assembly-part assembly-memory" aria-hidden="true"></span>
+                                    <span class="assembly-part assembly-monitor" aria-hidden="true"></span>
+                                    <span class="assembly-label" aria-hidden="true">Clique para montar</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="container mx-auto px-4"><div class="divider max-w-md mx-auto"></div></div>
+
+        <!-- Sobre -->
+        <section id="sobre" class="py-20 fade-in-section">
+            <div class="container mx-auto px-4">
+                <div class="max-w-3xl mx-auto text-center space-y-6">
+                    <h3 class="font-tech text-xl accent-text">// SOBRE A VERTEX</h3>
+                    <div class="panel rounded-xl p-6 md:p-8">
+                        <p class="text-white mb-4">
+                            A <strong class="accent-text">VERTEX</strong> é uma empresa especializada em soluções de Tecnologia da Informação, focada em entregar excelência em cada serviço prestado.
+                        </p>
+                        <p class="text-slate-300 mb-4">
+                            Com ampla experiência em infraestrutura, manutenção e recuperação de dados, atendemos empresas que buscam confiança, agilidade e suporte técnico de verdade.
+                        </p>
+                        <p class="text-slate-300">
+                            Mantemos sua tecnologia funcionando perfeitamente, para que você possa focar no que realmente importa: o seu negócio.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="container mx-auto px-4"><div class="divider max-w-md mx-auto"></div></div>
+
+        <!-- Serviços -->
+        <section id="servicos" class="py-20 fade-in-section">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h3 class="font-tech text-xl accent-text">// NOSSOS SERVIÇOS</h3>
+                    <p class="text-sm text-slate-400 mt-2">Soluções de TI sob medida para sua empresa</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="card service-card rounded-xl p-6" data-project="rollout" tabindex="0" role="button" aria-label="Abrir projeto Rollout">
+                        <div class="w-12 h-12 rounded-lg border border-cyan-500/30 flex items-center justify-center bg-cyan-500/10 mb-4">
+                            <i class="fa fa-cogs accent-text text-lg"></i>
+                        </div>
+                        <h4 class="font-tech text-base text-white mb-3">ROLLOUT</h4>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            Implantação e migração de equipamentos e sistemas com planejamento completo, instalação, configuração e treinamento.
+                        </p>
+                    </div>
+
+                    <div class="card service-card rounded-xl p-6" data-project="montagem" tabindex="0" role="button" aria-label="Abrir projeto Montagem de Máquinas">
+                        <div class="w-12 h-12 rounded-lg border border-cyan-500/30 flex items-center justify-center bg-cyan-500/10 mb-4">
+                            <i class="fa fa-desktop accent-text text-lg"></i>
+                        </div>
+                        <h4 class="font-tech text-base text-white mb-3">MONTAGEM DE MÁQUINAS</h4>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            Montagem e configuração de computadores e servidores de acordo com sua necessidade, com instalação de sistema e drivers.
+                        </p>
+                    </div>
+
+                    <div class="card service-card rounded-xl p-6" data-project="rede" tabindex="0" role="button" aria-label="Abrir projeto Configuração de Rede">
+                        <div class="w-12 h-12 rounded-lg border border-cyan-500/30 flex items-center justify-center bg-cyan-500/10 mb-4">
+                            <i class="fa fa-wifi accent-text text-lg"></i>
+                        </div>
+                        <h4 class="font-tech text-base text-white mb-3">CONFIGURAÇÃO DE REDE</h4>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            Instalação e otimização de redes cabeada e sem fio, roteadores, switches, segurança e estabilidade.
+                        </p>
+                    </div>
+
+                    <div class="card service-card rounded-xl p-6" data-project="formatacao" tabindex="0" role="button" aria-label="Abrir projeto Formatação">
+                        <div class="w-12 h-12 rounded-lg border border-cyan-500/30 flex items-center justify-center bg-cyan-500/10 mb-4">
+                            <i class="fa fa-laptop accent-text text-lg"></i>
+                        </div>
+                        <h4 class="font-tech text-base text-white mb-3">FORMATAÇÃO</h4>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            Formatação, instalação de sistema operacional, programas, otimização e limpeza completa do equipamento.
+                        </p>
+                    </div>
+
+                    <div class="card service-card rounded-xl p-6" data-project="recuperacao" tabindex="0" role="button" aria-label="Abrir projeto Recuperação de Arquivos">
+                        <div class="w-12 h-12 rounded-lg border border-cyan-500/30 flex items-center justify-center bg-cyan-500/10 mb-4">
+                            <i class="fa fa-database accent-text text-lg"></i>
+                        </div>
+                        <h4 class="font-tech text-base text-white mb-3">RECUPERAÇÃO DE ARQUIVOS</h4>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            Recuperação de dados perdidos ou apagados de HD, SSD, pendrive e cartões de memória. Quanto antes, melhores as chances!
+                        </p>
+                    </div>
+
+                    <div class="card service-card rounded-xl p-6" data-project="suporte" tabindex="0" role="button" aria-label="Abrir projeto Suporte Técnico">
+                        <div class="w-12 h-12 rounded-lg border border-cyan-500/30 flex items-center justify-center bg-cyan-500/10 mb-4">
+                            <i class="fa fa-headphones accent-text text-lg"></i>
+                        </div>
+                        <h4 class="font-tech text-base text-white mb-3">SUPORTE TÉCNICO</h4>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            Atendimento técnico para resolver problemas de hardware, software, rede e sistemas com agilidade.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="container mx-auto px-4"><div class="divider max-w-md mx-auto"></div></div>
+
+        <!-- Perguntas Frequentes -->
+        <section id="faq" class="py-20 fade-in-section">
+            <div class="container mx-auto px-4">
+                <div class="max-w-3xl mx-auto">
+                    <div class="text-center mb-12">
+                        <h3 class="font-tech text-xl accent-text">// PERGUNTAS FREQUENTES</h3>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="faq-item panel rounded-lg border border-slate-700 overflow-hidden">
+                            <button class="w-full px-5 py-4 flex justify-between items-center text-left text-white">
+                                <span class="font-medium">Quanto custam os serviços?</span>
+                                <i class="fa fa-chevron-down accent-text faq-icon transition-transform duration-300"></i>
+                            </button>
+                            <div class="faq-content px-5 pb-4 text-sm text-slate-300">
+                                O valor varia conforme o tipo e complexidade do serviço. Envie sua solicitação pelo WhatsApp que preparamos um orçamento personalizado!
+                            </div>
+                        </div>
+
+                        <div class="faq-item panel rounded-lg border border-slate-700 overflow-hidden">
+                            <button class="w-full px-5 py-4 flex justify-between items-center text-left text-white">
+                                <span class="font-medium">Atendem minha região?</span>
+                                <i class="fa fa-chevron-down accent-text faq-icon transition-transform duration-300"></i>
+                            </button>
+                            <div class="faq-content px-5 pb-4 text-sm text-slate-300">
+                                Sim! Atendemos presencialmente na região de São Paulo e remotamente em todo o Brasil.
+                            </div>
+                        </div>
+
+                        <div class="faq-item panel rounded-lg border border-slate-700 overflow-hidden">
+                            <button class="w-full px-5 py-4 flex justify-between items-center text-left text-white">
+                                <span class="font-medium">Qual o horário de atendimento?</span>
+                                <i class="fa fa-chevron-down accent-text faq-icon transition-transform duration-300"></i>
+                            </button>
+                            <div class="faq-content px-5 pb-4 text-sm text-slate-300">
+                                Segunda a sexta, das 8h às 18h. Mensagens pelo WhatsApp são respondidas o mais rápido possível.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="container mx-auto px-4"><div class="divider max-w-md mx-auto"></div></div>
+
+        <!-- Depoimentos -->
+        <section id="depoimentos" class="py-20 fade-in-section">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h3 class="font-tech text-xl accent-text">// OPINIÕES DE CLIENTES</h3>
+                </div>
+                <div class="testimonial-area max-w-5xl mx-auto">
+                    <div id="testimonialList" class="space-y-6">
+                        <div class="card rounded-xl p-6">
+                            <div class="flex text-yellow-400 mb-3">
+                                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                            </div>
+                            <p class="text-slate-300 italic mb-3">"Serviço impecável! Fizeram a montagem e configuração de toda a infraestrutura da nossa empresa com rapidez e qualidade técnica impressionante."</p>
+                            <p class="font-tech text-sm accent-text">— Empresa XYZ</p>
+                        </div>
+                        <div class="card rounded-xl p-6">
+                            <div class="flex text-yellow-400 mb-3">
+                                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                            </div>
+                            <p class="text-slate-300 italic mb-3">"Consegui recuperar arquivos que achei perdidos. Atendimento excelente, muito profissional e transparente."</p>
+                            <p class="font-tech text-sm accent-text">— Maria Silva</p>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-form card rounded-xl p-6">
+                        <div class="flex items-center gap-3 mb-5">
+                            <div class="w-10 h-10 rounded-lg border border-yellow-500/30 bg-yellow-500/10 flex items-center justify-center accent-text">
+                                <i class="fa fa-pencil"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-tech text-base text-white">DEIXE SUA OPINIÃO</h4>
+                                <p class="text-xs text-slate-400 mt-1">Sua experiência ajuda outras empresas.</p>
+                            </div>
+                        </div>
+                        <form id="testimonialForm" class="space-y-4">
+                            <div>
+                                <label for="clientName">Seu nome ou empresa</label>
+                                <input id="clientName" name="clientName" maxlength="60" required placeholder="Como devemos chamar você?">
+                            </div>
+                            <div>
+                                <label for="clientMessage">Seu depoimento</label>
+                                <textarea id="clientMessage" name="clientMessage" maxlength="420" required placeholder="Conte como foi sua experiência com a VERTEX..."></textarea>
+                            </div>
+                            <button class="btn-primary w-full px-5 py-3 rounded-lg text-sm font-medium" type="submit">
+                                <i class="fa fa-send mr-2"></i> PUBLICAR DEPOIMENTO
+                            </button>
+                            <p id="testimonialFormStatus" class="testimonial-form-status" aria-live="polite"></p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="container mx-auto px-4"><div class="divider max-w-md mx-auto"></div></div>
+
+        <!-- Contato -->
+        <section id="contato" class="py-20 fade-in-section">
+            <div class="container mx-auto px-4">
+                <div class="max-w-xl mx-auto text-center space-y-6">
+                    <h3 class="font-tech text-xl accent-text">// CONTATO</h3>
+                    <p class="text-slate-300">
+                        Precisa de um serviço ou tem dúvidas? Fale diretamente com a gente pelo WhatsApp.
+                    </p>
+                    <a href="https://wa.me/5511900000000" target="_blank" class="inline-flex items-center gap-3 px-8 py-3 rounded-lg border border-green-500/40 bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-all">
+                        <i class="fa fa-whatsapp fa-lg"></i>
+                        CHAMAR NO WHATSAPP
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="projectModal" class="project-modal" role="dialog" aria-modal="true" aria-labelledby="projectTitle" aria-hidden="true">
+        <div class="project-window">
+            <button id="projectClose" class="project-close" type="button" aria-label="Fechar projeto"><i class="fa fa-times"></i></button>
+            <div id="projectVisual" class="project-visual">
+                <div class="project-grid"></div>
+                <div id="projectDevice" class="project-device"><i class="fa fa-cogs"></i></div>
+                <div id="networkConfig" class="network-config" aria-label="Configuração de rede">
+                    <div class="network-config-header"><span></span> Configuração IPv4 / Wi-Fi</div>
+                    <div class="network-fields">
+                        <div class="network-field"><small>Endereço IP</small><strong>192.168.1.24</strong></div>
+                        <div class="network-field"><small>Máscara</small><strong>255.255.255.0</strong></div>
+                        <div class="network-field"><small>Gateway</small><strong>192.168.1.1</strong></div>
+                        <div class="network-field"><small>DNS primário</small><strong>8.8.8.8</strong></div>
+                    </div>
+                </div>
+                <div id="networkSignal" class="network-signal"><i class="fa fa-check-circle"></i> conexão estável</div>
+            </div>
+            <div class="project-info">
+                <h4 id="projectTitle">Projeto VERTEX</h4>
+                <p id="projectDescription" class="text-slate-300 text-sm leading-relaxed mt-3"></p>
+                <p class="project-status"><span class="status-dot"></span><span id="projectStatus">Em execução</span></p>
+                <div class="project-progress" aria-label="Progresso do projeto"><span></span></div>
+                <div class="project-actions">
+                    <button id="projectVoice" class="project-voice" type="button"><i class="fa fa-volume-up"></i> Ouvir explicação</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assistente IA -->
+    <div id="aiAssistant" class="fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:w-[360px] z-40">
+        <div class="panel rounded-xl overflow-hidden border border-cyan-500/30 shadow-glow">
+            <div class="px-4 py-3 border-b border-slate-700 flex justify-between items-center bg-cyan-500/5">
+                <div class="flex items-center gap-2">
+                    <!-- Rostinho / Robô clicável -->
+                    <div id="aiFaceBtn" class="ai-face">
+                        <div class="ai-face-eyes">
+                            <div class="ai-eye"></div>
+                            <div class="ai-eye"></div>
+                        </div>
+                        <div class="ai-mouth"></div>
+                    </div>
+                    <div>
+                        <h4 class="font-tech text-xs font-bold text-white">ASSISTENTE VERTEX</h4>
+                        <p class="text-[10px] text-slate-400 flex items-center gap-1">
+                            <span class="status-dot"></span> Online
+                        </p>
+                        <button id="welcomeVoiceBtn" class="welcome-voice" type="button" aria-label="Ouvir boas-vindas da IA">
+                            <i class="fa fa-volume-up"></i> Ativar voz
+                        </button>
+                    </div>
+                </div>
+                <button id="btnToggleAi" class="text-slate-400 hover:text-white text-sm">
+                    <i class="fa fa-minus"></i>
+                </button>
+            </div>
+
+            <!-- Perguntas Rápidas -->
+            <div id="quickQuestions" class="px-3 py-2 border-b border-slate-700 flex gap-2 overflow-x-auto">
+                <span class="quick-btn" data-q="O que é Rollout?">O que é Rollout?</span>
+                <span class="quick-btn" data-q="Quanto custa?">Quanto custa?</span>
+                <span class="quick-btn" data-q="Atendem minha região?">Atendem minha região?</span>
+            </div>
+
+            <div id="chatArea" class="h-72 overflow-y-auto p-3 space-y-3 text-xs scroll-chat">
+                <div class="flex gap-2">
+                    <div class="w-7 h-7 rounded-full border border-cyan-500/40 flex-shrink-0 flex items-center justify-center accent-text text-[10px]">
+                        <i class="fa fa-robot"></i>
+                    </div>
+                    <div class="chat-ai p-3">
+                        Olá! Eu sou o assistente da Vertex 🤖<br><br>
+                        Posso responder sobre:<br>
+                        ✅ Rollout<br>
+                        ✅ Montagem de Máquinas<br>
+                        ✅ Configuração de Rede<br>
+                        ✅ Formatação<br>
+                        ✅ Recuperação de Arquivos<br><br>
+                        Pergunte à vontade ou clique em uma pergunta acima!
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-3 border-t border-slate-700 flex gap-2">
+                <input type="text" id="aiInput" placeholder="Digite sua pergunta..." 
+                    class="flex-1 bg-slate-900/60 border border-slate-600 rounded-lg px-3 py-2 focus:outline-none focus:border-cyan-400 text-sm text-white">
+                <button id="btnSend" class="btn-primary px-3 rounded-lg text-sm">
+                    <i class="fa fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <footer class="panel border-t border-slate-700 py-3 text-center text-xs text-slate-400 fixed bottom-0 left-0 right-0 z-10">
+        <p>© 2026 VERTEX — Soluções em Tecnologia da Informação | Rollout • Montagem • Redes • Formatação • Recuperação de Arquivos</p>
+    </footer>
+
+    <script>
+        // ⚙️ NÚMERO DO WHATSAPP — COLOQUE O SEU ABAIXO
+        const NUMERO_WHATSAPP = '5511900000000';
+
+        // 📱 MENU MOBILE
+        const btnMenu = document.getElementById('btnMenu');
+        const menuMobile = document.getElementById('menuMobile');
+        btnMenu.addEventListener('click', () => menuMobile.classList.toggle('hidden'));
+
+        // Scroll suave
+        document.querySelectorAll('a[href^="#"]').forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                const alvo = document.querySelector(link.getAttribute('href'));
+                if (alvo) {
+                    alvo.scrollIntoView({behavior: 'smooth'});
+                    menuMobile.classList.add('hidden');
+                }
+            });
+        });
+
+        // 🎬 ANIMAÇÃO AO ROLAR
+        const faders = document.querySelectorAll('.fade-in-section');
+        const appearOnScroll = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, { threshold: 0.1 });
+        faders.forEach(fader => appearOnScroll.observe(fader));
+
+        // ❓ FAQ ACORDEON
+        document.querySelectorAll('.faq-item button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = btn.closest('.faq-item');
+                item.classList.toggle('open');
+            });
+        });
+
+        // 🤖 INTELIGÊNCIA ARTIFICIAL
+        const BASE_CONHECIMENTO = [
+            { chaves: ['rollout'], resposta: 'O serviço de <strong>Rollout</strong> compreende implantação, substituição e migração de equipamentos e sistemas de forma planejada e organizada. Realizamos todo o processo: planejamento, instalação, configuração e treinamento.' },
+            { chaves: ['montagem', 'montar'], resposta: 'Realizamos <strong>montagem e configuração</strong> de computadores e servidores. Escolhemos os componentes, montamos com qualidade e instalamos sistema e drivers.' },
+            { chaves: ['rede', 'configurar rede', 'wifi'], resposta: 'Fazemos <strong>configuração de redes</strong> cabeada e sem fio. Inclui roteadores, switches, segurança e estabilidade.' },
+            { chaves: ['formatação', 'formatar'], resposta: 'Serviço de <strong>formatação e manutenção</strong>: reinstalamos o sistema, programas e otimizamos o equipamento.' },
+            { chaves: ['recuperar', 'recuperação', 'arquivo', 'dado'], resposta: 'Recuperamos <strong>arquivos e dados perdidos</strong> de HD, SSD, pendrive e cartões de memória. Quanto antes, melhores as chances!' },
+            { chaves: ['quanto custa', 'preço', 'valor', 'orçamento'], resposta: 'Os valores variam conforme o serviço. Envie sua dúvida pelo WhatsApp que enviamos um orçamento detalhado!' },
+            { chaves: ['região', 'atendem', 'onde'], resposta: 'Atendemos presencialmente em São Paulo e remotamente em todo o Brasil!' },
+            { chaves: ['horário', 'horario', 'atendimento'], resposta: 'Atendimento de segunda a sexta, das 8h às 18h. Mensagens pelo WhatsApp são respondidas o mais rápido possível.' },
+            { chaves: ['ola', 'olá', 'oi', 'bom dia', 'boa tarde', 'boa noite'], resposta: 'Olá! 😊 Sou o assistente da Vertex. Posso ajudar com informações sobre Rollout, Montagem, Rede, Formatação e Recuperação de Arquivos. É só perguntar!' },
+            { chaves: ['ajuda', 'o que voce faz', 'quem é'], resposta: 'A <strong>Vertex</strong> oferece serviços completos de TI: Rollout, Montagem de Máquinas, Configuração de Rede, Formatação e Recuperação de Arquivos. Fale conosco pelo WhatsApp para mais detalhes!' }
+        ];
+
+        const chatArea = document.getElementById('chatArea');
+        const aiInput = document.getElementById('aiInput');
+        const btnSend = document.getElementById('btnSend');
+        const btnToggleAi = document.getElementById('btnToggleAi');
+        const quickQuestions = document.getElementById('quickQuestions');
+        const aiFaceBtn = document.getElementById('aiFaceBtn');
+
+        function limparTexto(texto) {
+            return texto.normalize('NFD').toLowerCase()
+                .replace(/[áàâãä]/g,'a').replace(/[éèêë]/g,'e')
+                .replace(/[íìîï]/g,'i').replace(/[óòôõö]/g,'o')
+                .replace(/[úùûü]/g,'u').replace(/[ç]/g,'c')
+                .replace(/[^a-z0-9 ]/g,' ').trim();
+        }
+
+        function adicionarMensagem(texto, ehUsuario = false) {
+            const div = document.createElement('div');
+            div.className = `flex gap-2 ${ehUsuario ? 'justify-end' : ''}`;
+            if (ehUsuario) {
+                div.innerHTML = `<div class="chat-user p-3 max-w-[85%] text-sm">${texto}</div>`;
+            } else {
+                div.innerHTML = `
+                    <div class="w-7 h-7 rounded-full border border-cyan-500/40 flex-shrink-0 flex items-center justify-center accent-text text-[10px]">
+                        <i class="fa fa-robot"></i>
+                    </div>
+                    <div class="chat-ai p-3 max-w-[85%] text-sm">${texto}</div>
+                `;
+            }
+            chatArea.appendChild(div);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function buscarResposta(pergunta) {
+            const texto = limparTexto(pergunta);
+            for (const item of BASE_CONHECIMENTO) {
+                for (const chave of item.chaves) {
+                    if (texto.includes(limparTexto(chave))) return item.resposta;
+                }
+            }
+            const link = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent('Olá! Tenho uma dúvida: ' + pergunta)}`;
+            return `Encaminho você para um de nossos especialistas!<br><br>
+                <a href="${link}" target="_blank" class="inline-block px-4 py-2 bg-green-500/10 border border-green-500/30 rounded-lg text-green-400 text-xs mt-2">
+                    <i class="fa fa-whatsapp"></i> Encaminhar dúvida
+                </a>
+            `;
+        }
+
+        function processarPergunta(perguntaTexto = null) {
+            const pergunta = perguntaTexto || aiInput.value.trim();
+            if (!pergunta) return;
+            adicionarMensagem(pergunta, true);
+            aiInput.value = '';
+            setTimeout(() => adicionarMensagem(buscarResposta(pergunta)), 600);
+        }
+
+        // 🤖 ROSTINHO DA IA — CLIQUE PARA SAUDAR
+        aiFaceBtn.addEventListener('click', () => {
+            aiFaceBtn.classList.remove('clicked');
+            void aiFaceBtn.offsetWidth;
+            aiFaceBtn.classList.add('clicked');
+            processarPergunta('Olá!');
+        });
+
+        // Botões de perguntas rápidas
+        document.querySelectorAll('.quick-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                processarPergunta(btn.dataset.q);
+            });
+        });
+
+        // Enviar mensagem — BOTÃO
+        btnSend.addEventListener('click', () => processarPergunta());
+
+        // Enviar mensagem — TECLA ENTER
+        aiInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                processarPergunta();
+            }
+        });
+
+        // Minimizar chat
+        let minimizado = false;
+        btnToggleAi.addEventListener('click', () => {
+            minimizado = !minimizado;
+            chatArea.classList.toggle('hidden', minimizado);
+            quickQuestions.classList.toggle('hidden', minimizado);
+            aiInput.classList.toggle('hidden', minimizado);
+            btnSend.classList.toggle('hidden', minimizado);
+            btnToggleAi.innerHTML = minimizado ? '<i class="fa fa-plus"></i>' : '<i class="fa fa-minus"></i>';
+        });
+    </script>
+    <script>
+        const buildStation = document.getElementById('buildStation');
+        const assemblyLabel = buildStation.querySelector('.assembly-label');
+        let assemblyTimer;
+
+        buildStation.addEventListener('click', () => {
+            clearTimeout(assemblyTimer);
+            const isComplete = buildStation.classList.contains('is-complete');
+            buildStation.classList.remove('is-complete');
+            buildStation.classList.toggle('is-building', !isComplete);
+            buildStation.setAttribute('aria-pressed', String(!isComplete));
+            assemblyLabel.textContent = isComplete ? 'Clique para montar' : 'Montando computador';
+
+            if (!isComplete) {
+                assemblyTimer = setTimeout(() => {
+                    buildStation.classList.remove('is-building');
+                    buildStation.classList.add('is-complete');
+                    assemblyLabel.textContent = 'Computador';
+                    buildStation.setAttribute('aria-label', 'Reiniciar montagem do computador');
+                }, 2400);
+            } else {
+                buildStation.setAttribute('aria-label', 'Montar computador');
+            }
+        });
+    </script>
+    <script>
+        const testimonialForm = document.getElementById('testimonialForm');
+        const testimonialList = document.getElementById('testimonialList');
+        const testimonialStatus = document.getElementById('testimonialFormStatus');
+        const testimonialsStorageKey = 'vertex-testimonials';
+
+        function createTestimonial(name, message) {
+            const card = document.createElement('div');
+            card.className = 'card rounded-xl p-6';
+
+            const rating = document.createElement('div');
+            rating.className = 'flex text-yellow-400 mb-3';
+            rating.innerHTML = '<i class="fa fa-star"></i>'.repeat(5);
+
+            const quote = document.createElement('p');
+            quote.className = 'text-slate-300 italic mb-3';
+            quote.textContent = `"${message}"`;
+
+            const author = document.createElement('p');
+            author.className = 'font-tech text-sm accent-text';
+            author.textContent = `— ${name}`;
+
+            card.append(rating, quote, author);
+            return card;
+        }
+
+        function loadSavedTestimonials() {
+            try {
+                const savedTestimonials = JSON.parse(localStorage.getItem(testimonialsStorageKey) || '[]');
+                savedTestimonials.reverse().forEach(testimonial => {
+                    testimonialList.prepend(createTestimonial(testimonial.name, testimonial.message));
+                });
+            } catch (error) {
+                localStorage.removeItem(testimonialsStorageKey);
+            }
+        }
+
+        testimonialForm.addEventListener('submit', event => {
+            event.preventDefault();
+            const name = document.getElementById('clientName').value.trim();
+            const message = document.getElementById('clientMessage').value.trim();
+            if (!name || !message) return;
+
+            testimonialList.prepend(createTestimonial(name, message));
+            try {
+                const savedTestimonials = JSON.parse(localStorage.getItem(testimonialsStorageKey) || '[]');
+                savedTestimonials.push({ name, message });
+                localStorage.setItem(testimonialsStorageKey, JSON.stringify(savedTestimonials.slice(-10)));
+            } catch (error) {
+                testimonialStatus.textContent = 'Publicado nesta sessão.';
+            }
+
+            testimonialForm.reset();
+            testimonialStatus.textContent = 'Obrigado. Seu depoimento foi publicado com sucesso.';
+        });
+
+        loadSavedTestimonials();
+    </script>
+    <script>
+        let welcomeSpeechPending = true;
+        let welcomeSpeechStarted = false;
+        const welcomeVoiceBtn = document.getElementById('welcomeVoiceBtn');
+
+        function speakWelcome(userInitiated = false) {
+            if (!welcomeSpeechPending || !('speechSynthesis' in window)) return;
+            const welcomeSpeech = new SpeechSynthesisUtterance('Bem-vindo à VERTEX. Eu sou o seu assistente de inteligência artificial. Como posso ajudar?');
+            welcomeSpeech.lang = 'pt-BR';
+            welcomeSpeech.rate = 0.92;
+            welcomeSpeech.pitch = 1.04;
+            const brazilianVoice = window.speechSynthesis.getVoices().find(voice => voice.lang.toLowerCase().startsWith('pt-br'));
+            if (brazilianVoice) welcomeSpeech.voice = brazilianVoice;
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.resume();
+            welcomeSpeech.onstart = () => {
+                welcomeSpeechStarted = true;
+                welcomeSpeechPending = false;
+                welcomeVoiceBtn.classList.add('is-speaking');
+                welcomeVoiceBtn.innerHTML = '<i class="fa fa-volume-up"></i> Voz ativa';
+            };
+            welcomeSpeech.onend = () => {
+                welcomeVoiceBtn.classList.remove('is-speaking');
+                welcomeVoiceBtn.innerHTML = '<i class="fa fa-volume-up"></i> Ouvir boas-vindas';
+            };
+            window.speechSynthesis.speak(welcomeSpeech);
+        }
+
+        if ('speechSynthesis' in window) window.speechSynthesis.addEventListener('voiceschanged', () => {
+            if (welcomeSpeechPending) speakWelcome();
+        }, { once: true });
+        window.addEventListener('load', () => {
+            window.setTimeout(speakWelcome, 450);
+        });
+        document.addEventListener('pointerdown', event => {
+            if (!event.target.closest('#welcomeVoiceBtn') && !welcomeSpeechStarted) speakWelcome(true);
+        }, { once: true, passive: true });
+        document.addEventListener('keydown', () => {
+            if (!welcomeSpeechStarted) speakWelcome(true);
+        }, { once: true });
+        welcomeVoiceBtn.addEventListener('click', () => {
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+                welcomeSpeechPending = true;
+                welcomeSpeechStarted = false;
+                welcomeVoiceBtn.classList.remove('is-speaking');
+                welcomeVoiceBtn.innerHTML = '<i class="fa fa-volume-up"></i> Ativar voz';
+                return;
+            }
+            welcomeSpeechPending = true;
+            speakWelcome(true);
+        });
+    </script>
+    <script>
+        const projectModal = document.getElementById('projectModal');
+        const projectClose = document.getElementById('projectClose');
+        const projectTitle = document.getElementById('projectTitle');
+        const projectDescription = document.getElementById('projectDescription');
+        const projectStatus = document.getElementById('projectStatus');
+        const projectDevice = document.getElementById('projectDevice');
+        const projectVisual = document.getElementById('projectVisual');
+        const projectVoice = document.getElementById('projectVoice');
+        let activeProjectScene = null;
+        const projectScenes = {
+            rollout: { title: 'Rollout de equipamentos', description: 'A equipe prepara um PCV, instala os componentes e organiza cada estação para entrar em operação.', status: 'Montando PCV', voice: 'Iniciando o Rollout. Estou preparando o PCV, instalando os equipamentos e organizando cada estação para que tudo entre em operação com segurança.', icon: 'fa-cogs', device: '' },
+            montagem: { title: 'Montagem de máquina', description: 'Componentes sendo encaixados, testados e preparados para formar uma máquina rápida e confiável.', status: 'Montando computador', voice: 'Iniciando a montagem da máquina. Estou encaixando a placa, memória e demais componentes, depois vou testar o computador completo.', icon: 'fa-desktop', device: '' },
+            rede: { title: 'Configuração de rede', description: 'O roteador distribui o sinal, a rede Wi-Fi é ajustada e a conexão passa por uma verificação de estabilidade.', status: 'Configurando Wi-Fi', voice: 'Configurando a rede Wi-Fi. Estou aplicando o endereço IP, a máscara, o gateway e o DNS, e depois vou verificar a estabilidade da conexão.', icon: 'fa-wifi', device: 'is-network' },
+            formatacao: { title: 'Formatação e otimização', description: 'O sistema é preparado do zero, recebe os drivers e volta otimizado para o uso diário.', status: 'Instalando sistema', voice: 'Iniciando a formatação. Estou preparando o sistema do zero, instalando os drivers e deixando o computador otimizado para o uso diário.', icon: 'fa-laptop', device: '' },
+            recuperacao: { title: 'Recuperação de arquivos', description: 'A unidade é analisada com cuidado enquanto os arquivos importantes são localizados e recuperados.', status: 'Analisando unidade', voice: 'Iniciando a recuperação de arquivos. Estou analisando a unidade com cuidado para localizar e recuperar seus dados importantes.', icon: 'fa-database', device: 'is-data' },
+            suporte: { title: 'Suporte técnico', description: 'O diagnóstico identifica o ponto do problema e acompanha a máquina até tudo voltar a funcionar.', status: 'Executando diagnóstico', voice: 'Iniciando o suporte técnico. Estou fazendo um diagnóstico do equipamento para encontrar a causa do problema e devolver tudo funcionando.', icon: 'fa-headphones', device: '' }
+        };
+
+        function openProject(projectKey) {
+            const scene = projectScenes[projectKey];
+            if (!scene) return;
+            projectTitle.textContent = scene.title;
+            projectDescription.textContent = scene.description;
+            projectStatus.textContent = scene.status;
+            activeProjectScene = scene;
+            projectVoice.classList.remove('is-speaking');
+            projectVoice.innerHTML = '<i class="fa fa-volume-up"></i> Ouvir explicação';
+            projectDevice.className = `project-device ${scene.device}`;
+            projectDevice.innerHTML = `<i class="fa ${scene.icon}"></i>`;
+            projectVisual.classList.toggle('is-networking', projectKey === 'rede');
+            projectModal.classList.add('is-open');
+            projectModal.setAttribute('aria-hidden', 'false');
+            projectClose.focus();
+            speakActiveProject();
+        }
+
+        function speakActiveProject() {
+            if (!activeProjectScene || !('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const speech = new SpeechSynthesisUtterance(activeProjectScene.voice);
+            speech.lang = 'pt-BR';
+            speech.rate = 0.94;
+            speech.pitch = 1.02;
+            speech.onstart = () => {
+                projectVoice.classList.add('is-speaking');
+                projectVoice.innerHTML = '<i class="fa fa-stop"></i> Parar explicação';
+            };
+            speech.onend = () => {
+                projectVoice.classList.remove('is-speaking');
+                projectVoice.innerHTML = '<i class="fa fa-volume-up"></i> Ouvir explicação';
+            };
+            window.speechSynthesis.speak(speech);
+        }
+
+        function closeProject() {
+            window.speechSynthesis.cancel();
+            projectVoice.classList.remove('is-speaking');
+            projectModal.classList.remove('is-open');
+            projectModal.setAttribute('aria-hidden', 'true');
+        }
+
+        document.querySelectorAll('.service-card').forEach(card => {
+            card.addEventListener('click', () => openProject(card.dataset.project));
+            card.addEventListener('keydown', event => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    openProject(card.dataset.project);
+                }
+            });
+        });
+        projectClose.addEventListener('click', closeProject);
+        projectVoice.addEventListener('click', () => {
+            if (!activeProjectScene || !('speechSynthesis' in window)) return;
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+                projectVoice.classList.remove('is-speaking');
+                projectVoice.innerHTML = '<i class="fa fa-volume-up"></i> Ouvir explicação';
+                return;
+            }
+            speakActiveProject();
+        });
+        projectModal.addEventListener('click', event => {
+            if (event.target === projectModal) closeProject();
+        });
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && projectModal.classList.contains('is-open')) closeProject();
+        });
+    </script>
+</body>
+</html>
