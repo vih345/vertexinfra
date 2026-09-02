@@ -18,6 +18,7 @@
             "description": "Soluções em TI, suporte técnico e infraestrutura para empresas.",
             "telephone": "+55 11 98147-1295",
             "areaServed": ["São Paulo", "Brasil"],
+            "openingHours": "Mo-Fr 08:00-18:00",
             "serviceType": ["Rollout", "Montagem de computadores", "Configuração de redes", "Formatação", "Recuperação de arquivos", "Suporte técnico"]
         }
     </script>
@@ -435,6 +436,15 @@
         .quote-form label { display: block; color: #d3d0c7; font-size: 0.75rem; margin-bottom: 0.4rem; }
         .whatsapp-float { box-shadow: 0 10px 28px rgba(37, 211, 102, 0.2); transition: transform 0.25s ease, box-shadow 0.25s ease; }
         .whatsapp-float:hover { transform: translateY(-3px); box-shadow: 0 14px 34px rgba(37, 211, 102, 0.34); }
+        .assistant-float { box-shadow: 0 10px 28px rgba(185, 156, 255, 0.2); transition: transform 0.25s ease, box-shadow 0.25s ease; }
+        .assistant-float:hover { transform: translateY(-3px); box-shadow: 0 14px 34px rgba(185, 156, 255, 0.34); }
+        .privacy-content { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+        .privacy-content.is-open { max-height: 900px; }
+        .site-footer { padding-bottom: 0.75rem; }
+        .testimonial-card { position: relative; }
+        .testimonial-delete { display: none; position: absolute; top: 1rem; right: 1rem; color: #fca5a5; font-size: 0.75rem; }
+        .admin-mode .testimonial-delete { display: inline-flex; align-items: center; gap: 0.3rem; }
+        .admin-status { min-height: 1.1rem; color: var(--aqua); font-size: 0.7rem; }
         @keyframes botFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
         @keyframes botWorkLeft { 0%, 100% { transform: rotate(19deg); } 50% { transform: rotate(5deg); } }
         @keyframes botWorkRight { 0%, 100% { transform: rotate(-25deg); } 50% { transform: rotate(-8deg); } }
@@ -924,16 +934,16 @@
 
                         <div class="grid grid-cols-3 gap-4 pt-6">
                             <div class="rounded-lg border border-slate-700 p-4 text-center bg-slate-800/40">
-                                <p class="font-tech text-xl accent-text">99.9%</p>
-                                <p class="text-xs text-slate-400 mt-1">Disponibilidade</p>
+                                <p class="font-tech text-xl accent-text">CLARO</p>
+                                <p class="text-xs text-slate-400 mt-1">Diagnóstico</p>
                             </div>
                             <div class="rounded-lg border border-slate-700 p-4 text-center bg-slate-800/40">
                                 <p class="font-tech text-xl accent-text">RÁPIDO</p>
                                 <p class="text-xs text-slate-400 mt-1">Retorno ágil</p>
                             </div>
                             <div class="rounded-lg border border-slate-700 p-4 text-center bg-slate-800/40">
-                                <p class="font-tech text-xl accent-text">5+</p>
-                                <p class="text-xs text-slate-400 mt-1">Anos de Experiência</p>
+                                <p class="font-tech text-xl accent-text">SP</p>
+                                <p class="text-xs text-slate-400 mt-1">Atendimento local</p>
                             </div>
                         </div>
                     </div>
@@ -1074,7 +1084,7 @@
                 </div>
                 <div class="text-center mt-10">
                     <p class="text-sm text-slate-400 mb-4">Não encontrou exatamente o que precisa?</p>
-                    <a href="#contato" class="btn-primary inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium"><i class="fa fa-calculator"></i> SOLICITAR ORÇAMENTO</a>
+                    <a href="#contato" data-service="Outro" class="btn-primary inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium"><i class="fa fa-calculator"></i> SOLICITAR ORÇAMENTO</a>
                 </div>
             </div>
         </section>
@@ -1136,20 +1146,6 @@
                 </div>
                 <div class="testimonial-area max-w-5xl mx-auto">
                     <div id="testimonialList" class="space-y-6">
-                        <div class="card rounded-xl p-6">
-                            <div class="flex text-yellow-400 mb-3">
-                                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
-                            </div>
-                            <p class="text-slate-300 italic mb-3">"Serviço impecável! Fizeram a montagem e configuração de toda a infraestrutura da nossa empresa com rapidez e qualidade técnica impressionante."</p>
-                            <p class="font-tech text-sm accent-text">— Empresa XYZ</p>
-                        </div>
-                        <div class="card rounded-xl p-6">
-                            <div class="flex text-yellow-400 mb-3">
-                                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
-                            </div>
-                            <p class="text-slate-300 italic mb-3">"Consegui recuperar arquivos que achei perdidos. Atendimento excelente, muito profissional e transparente."</p>
-                            <p class="font-tech text-sm accent-text">— Maria Silva</p>
-                        </div>
                     </div>
 
                     <div class="testimonial-form card rounded-xl p-6">
@@ -1161,6 +1157,10 @@
                                 <h4 class="font-tech text-base text-white">DEIXE SUA OPINIÃO</h4>
                                 <p class="text-xs text-slate-400 mt-1">Sua experiência ajuda outras empresas.</p>
                             </div>
+                        </div>
+                        <div class="flex items-center justify-between mb-4">
+                            <p id="adminStatus" class="admin-status" aria-live="polite"></p>
+                            <button id="adminToggle" class="text-xs text-slate-400 underline hover:text-white" type="button">Entrar como administrador</button>
                         </div>
                         <form id="testimonialForm" class="space-y-4">
                             <div>
@@ -1242,12 +1242,12 @@
         </div>
     </div>
 
-    <a href="https://wa.me/5511981471295" target="_blank" rel="noopener noreferrer" class="whatsapp-float fixed right-5 bottom-16 z-30 w-12 h-12 rounded-full bg-green-500 text-white flex items-center justify-center" aria-label="Abrir conversa no WhatsApp" title="Falar pelo WhatsApp">
-        <i class="fa fa-whatsapp text-2xl"></i>
-    </a>
+    <button id="assistantOpenButton" class="assistant-float fixed right-5 bottom-32 z-30 w-12 h-12 rounded-full bg-slate-800 border border-purple-300/50 text-purple-200 flex items-center justify-center" type="button" aria-label="Abrir assistente Vertex" title="Abrir assistente">
+        <i class="fa fa-comments text-xl"></i>
+    </button>
 
     <!-- Assistente IA -->
-    <div id="aiAssistant" class="fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:w-[360px] z-40">
+    <div id="aiAssistant" class="fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:w-[360px] z-40 hidden">
         <div class="panel rounded-xl overflow-hidden border border-cyan-500/30 shadow-glow">
             <div class="px-4 py-3 border-b border-slate-700 flex justify-between items-center bg-cyan-500/5">
                 <div class="flex items-center gap-2">
@@ -1310,8 +1310,12 @@
     </div>
 
     <!-- Rodapé -->
-    <footer class="panel border-t border-slate-700 py-3 text-center text-xs text-slate-400 fixed bottom-0 left-0 right-0 z-10">
+    <footer class="site-footer panel border-t border-slate-700 py-3 text-center text-xs text-slate-400 relative z-10">
         <p>© 2026 VERTEX — Soluções em Tecnologia da Informação | Rollout • Montagem • Redes • Formatação • Recuperação de Arquivos</p>
+        <button id="privacyToggle" class="mt-2 text-slate-400 underline hover:text-white" type="button" aria-expanded="false" aria-controls="privacyContent">Privacidade e LGPD</button>
+        <div id="privacyContent" class="privacy-content max-w-2xl mx-auto text-left mt-2" hidden>
+            <p class="pt-2">Os dados enviados no formulário de orçamento são usados somente para responder ao seu atendimento pelo WhatsApp. O formulário de depoimento fica salvo apenas neste navegador. Não compartilhamos essas informações com terceiros.</p>
+        </div>
     </footer>
 
     <script>
@@ -1383,6 +1387,15 @@
         const btnToggleAi = document.getElementById('btnToggleAi');
         const quickQuestions = document.getElementById('quickQuestions');
         const aiFaceBtn = document.getElementById('aiFaceBtn');
+
+        function mostrarAssistente() {
+            document.getElementById('aiAssistant').classList.remove('hidden');
+            document.getElementById('assistantOpenButton').classList.add('hidden');
+            aiInput.focus();
+        }
+
+        aiFaceBtn.addEventListener('click', mostrarAssistente);
+        document.getElementById('assistantOpenButton').addEventListener('click', mostrarAssistente);
 
         function limparTexto(texto) {
             return texto.normalize('NFD').toLowerCase()
@@ -1466,6 +1479,7 @@
             quickQuestions.classList.toggle('hidden', minimizado);
             aiInput.classList.toggle('hidden', minimizado);
             btnSend.classList.toggle('hidden', minimizado);
+            document.getElementById('assistantOpenButton').classList.toggle('hidden', !minimizado);
             btnToggleAi.innerHTML = minimizado ? '<i class="fa fa-plus"></i>' : '<i class="fa fa-minus"></i>';
         });
     </script>
@@ -1498,11 +1512,79 @@
         const testimonialForm = document.getElementById('testimonialForm');
         const testimonialList = document.getElementById('testimonialList');
         const testimonialStatus = document.getElementById('testimonialFormStatus');
-        const testimonialsStorageKey = 'vertex-testimonials';
+        const adminToggle = document.getElementById('adminToggle');
+        const adminStatus = document.getElementById('adminStatus');
+        let adminMode = false;
 
-        function createTestimonial(name, message) {
+        function updateAdminMode() {
+            document.body.classList.toggle('admin-mode', adminMode);
+            adminToggle.textContent = adminMode ? 'Sair do modo administrador' : 'Entrar como administrador';
+            adminStatus.textContent = adminMode ? 'Modo administrador ativo.' : '';
+        }
+
+        async function requestAdmin(endpoint, options = {}) {
+            const response = await fetch(`comentarios.php${endpoint}`, {
+                ...options,
+                headers: { 'Content-Type': 'application/json', ...(options.headers || {}) }
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'Não foi possível concluir a ação.');
+            return data;
+        }
+
+        adminToggle.addEventListener('click', async () => {
+            if (adminMode) {
+                adminMode = false;
+                await requestAdmin('?action=logout', { method: 'POST' });
+                updateAdminMode();
+                return;
+            }
+
+            const password = window.prompt('Digite a senha de administrador:');
+            if (password === null) return;
+            try {
+                await requestAdmin('?action=login', { method: 'POST', body: JSON.stringify({ password }) });
+                adminMode = true;
+                updateAdminMode();
+            } catch (error) {
+                adminStatus.textContent = error.message;
+            }
+        });
+
+        function createTestimonial(id, name, message) {
             const card = document.createElement('div');
-            card.className = 'card rounded-xl p-6';
+            card.className = 'card testimonial-card rounded-xl p-6';
+            let currentMessage = message;
+            card.dataset.id = id;
+
+            const editButton = document.createElement('button');
+            editButton.className = 'testimonial-edit';
+            editButton.type = 'button';
+            editButton.setAttribute('aria-label', `Editar comentário de ${name}`);
+            editButton.innerHTML = '<i class="fa fa-pencil"></i> Editar';
+
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'testimonial-delete';
+            deleteButton.type = 'button';
+            deleteButton.setAttribute('aria-label', `Apagar comentário de ${name}`);
+            deleteButton.innerHTML = '<i class="fa fa-trash"></i> Apagar';
+
+            deleteButton.addEventListener('click', () => {
+                if (!adminMode || !window.confirm('Apagar este comentário?')) return;
+                requestAdmin(`?action=delete&id=${encodeURIComponent(id)}`, { method: 'DELETE' })
+                    .then(() => { card.remove(); adminStatus.textContent = 'Comentário apagado.'; })
+                    .catch(error => { adminStatus.textContent = error.message; });
+            });
+
+            editButton.addEventListener('click', () => {
+                if (!adminMode) return;
+                const editedMessage = window.prompt('Edite o comentário:', currentMessage);
+                if (editedMessage === null || !editedMessage.trim()) return;
+                const cleanMessage = editedMessage.trim().slice(0, 420);
+                requestAdmin(`?action=update&id=${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify({ message: cleanMessage }) })
+                    .then(() => { quote.textContent = `"${cleanMessage}"`; currentMessage = cleanMessage; adminStatus.textContent = 'Comentário atualizado com sucesso.'; })
+                    .catch(error => { adminStatus.textContent = error.message; });
+            });
 
             const rating = document.createElement('div');
             rating.className = 'flex text-yellow-400 mb-3';
@@ -1516,44 +1598,46 @@
             author.className = 'font-tech text-sm accent-text';
             author.textContent = `— ${name}`;
 
-            card.append(rating, quote, author);
+            card.append(editButton, deleteButton, rating, quote, author);
             return card;
         }
 
-        function loadSavedTestimonials() {
-            try {
-                const savedTestimonials = JSON.parse(localStorage.getItem(testimonialsStorageKey) || '[]');
-                savedTestimonials.reverse().forEach(testimonial => {
-                    testimonialList.prepend(createTestimonial(testimonial.name, testimonial.message));
-                });
-            } catch (error) {
-                localStorage.removeItem(testimonialsStorageKey);
-            }
+        async function loadTestimonials() {
+            const data = await requestAdmin('');
+            testimonialList.replaceChildren();
+            data.comments.forEach(testimonial => {
+                testimonialList.append(createTestimonial(testimonial.id, testimonial.name, testimonial.message));
+            });
+            adminMode = data.admin;
+            updateAdminMode();
         }
 
-        testimonialForm.addEventListener('submit', event => {
+        testimonialForm.addEventListener('submit', async event => {
             event.preventDefault();
             const name = document.getElementById('clientName').value.trim();
             const message = document.getElementById('clientMessage').value.trim();
             if (!name || !message) return;
 
-            testimonialList.prepend(createTestimonial(name, message));
             try {
-                const savedTestimonials = JSON.parse(localStorage.getItem(testimonialsStorageKey) || '[]');
-                savedTestimonials.push({ name, message });
-                localStorage.setItem(testimonialsStorageKey, JSON.stringify(savedTestimonials.slice(-10)));
+                await requestAdmin('?action=create', { method: 'POST', body: JSON.stringify({ name, message }) });
+                await loadTestimonials();
+                testimonialForm.reset();
+                testimonialStatus.textContent = 'Obrigado. Seu depoimento foi publicado com sucesso.';
             } catch (error) {
-                testimonialStatus.textContent = 'Publicado nesta sessão.';
+                testimonialStatus.textContent = error.message;
             }
-
-            testimonialForm.reset();
-            testimonialStatus.textContent = 'Obrigado. Seu depoimento foi publicado com sucesso.';
         });
 
-        loadSavedTestimonials();
+        loadTestimonials().catch(error => { testimonialStatus.textContent = error.message; });
 
         const quoteForm = document.getElementById('quoteForm');
         const quoteFormStatus = document.getElementById('quoteFormStatus');
+        document.querySelectorAll('[data-service]').forEach(link => {
+            link.addEventListener('click', () => {
+                const service = document.getElementById('quoteService');
+                if (service) service.value = link.dataset.service;
+            });
+        });
         quoteForm.addEventListener('submit', event => {
             event.preventDefault();
             const name = document.getElementById('quoteName').value.trim();
@@ -1566,9 +1650,17 @@
             quoteFormStatus.textContent = 'Abrindo o WhatsApp para concluir seu atendimento.';
             quoteForm.reset();
         });
+
+        const privacyToggle = document.getElementById('privacyToggle');
+        const privacyContent = document.getElementById('privacyContent');
+        privacyToggle.addEventListener('click', () => {
+            const isOpen = privacyContent.classList.toggle('is-open');
+            privacyContent.hidden = !isOpen;
+            privacyToggle.setAttribute('aria-expanded', String(isOpen));
+        });
     </script>
     <script>
-        let welcomeSpeechPending = true;
+        let welcomeSpeechPending = false;
         let welcomeSpeechStarted = false;
         const welcomeVoiceBtn = document.getElementById('welcomeVoiceBtn');
 
@@ -1595,18 +1687,6 @@
             window.speechSynthesis.speak(welcomeSpeech);
         }
 
-        if ('speechSynthesis' in window) window.speechSynthesis.addEventListener('voiceschanged', () => {
-            if (welcomeSpeechPending) speakWelcome();
-        }, { once: true });
-        window.addEventListener('load', () => {
-            window.setTimeout(speakWelcome, 450);
-        });
-        document.addEventListener('pointerdown', event => {
-            if (!event.target.closest('#welcomeVoiceBtn') && !welcomeSpeechStarted) speakWelcome(true);
-        }, { once: true, passive: true });
-        document.addEventListener('keydown', () => {
-            if (!welcomeSpeechStarted) speakWelcome(true);
-        }, { once: true });
         welcomeVoiceBtn.addEventListener('click', () => {
             if (window.speechSynthesis.speaking) {
                 window.speechSynthesis.cancel();
