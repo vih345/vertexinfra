@@ -1,0 +1,14 @@
+[
+    {
+        "id": "72f6c2a9de4c5432",
+        "name": "Empresa XYZ",
+        "message": "Serviço impecável! Fizeram a montagem e configuração de toda a infraestrutura da nossa empresa com rapidez e qualidade técnica impressionante.",
+        "approved": true
+    },
+    {
+        "id": "4072b9e4b36c6c3e",
+        "name": "Maria Silva",
+        "message": "Consegui recuperar arquivos que achei perdidos. Atendimento excelente, muito profissional e transparente.",
+        "approved": true
+    }
+]
