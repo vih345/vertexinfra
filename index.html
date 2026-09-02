@@ -27,7 +27,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+    <link rel="icon" type="image/png" href="img/0e2603af-10f2-4609-8c9e-9567ea95839f.png">
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -93,6 +93,8 @@
 
         body {
             background:
+                linear-gradient(rgba(8, 9, 10, 0.82), rgba(8, 9, 10, 0.94)),
+                url('img/0e2603af-10f2-4609-8c9e-9567ea95839f.png') center top / cover fixed no-repeat,
                 radial-gradient(ellipse at 12% 8%, rgba(80, 80, 86, 0.12), transparent 38%),
                 radial-gradient(ellipse at 88% 34%, rgba(57, 58, 63, 0.1), transparent 34%),
                 linear-gradient(135deg, var(--ink) 0%, var(--ink-deep) 100%);
@@ -856,9 +858,7 @@
         <div class="panel border-b border-slate-700">
             <div class="container mx-auto px-4 py-3 flex justify-between items-center">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-cyan-500/10 border border-cyan-400/40 shadow-[0_0_10px_rgba(34,211,238,0.2)]">
-                        <i class="fa fa-bolt accent-text text-lg"></i>
-                    </div>
+                    <img src="img/0e2603af-10f2-4609-8c9e-9567ea95839f.png" alt="VERTEX Soluções em TI" class="w-14 h-10 object-contain rounded-lg">
                     <div>
                         <h1 class="font-tech text-xl font-bold tracking-wide accent-text">VERTEX</h1>
                         <p class="text-[10px] text-slate-400 tracking-widest">SOLUÇÕES EM TI</p>
@@ -1514,6 +1514,8 @@
         const testimonialStatus = document.getElementById('testimonialFormStatus');
         const adminToggle = document.getElementById('adminToggle');
         const adminStatus = document.getElementById('adminStatus');
+        const localCommentsKey = 'vertex-comments-local';
+        let serverAvailable = true;
         let adminMode = false;
 
         function updateAdminMode() {
@@ -1523,13 +1525,29 @@
         }
 
         async function requestAdmin(endpoint, options = {}) {
-            const response = await fetch(`comentarios.php${endpoint}`, {
-                ...options,
-                headers: { 'Content-Type': 'application/json', ...(options.headers || {}) }
-            });
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.error || 'Não foi possível concluir a ação.');
-            return data;
+            try {
+                const response = await fetch(`comentarios.php${endpoint}`, {
+                    ...options,
+                    headers: { 'Content-Type': 'application/json', ...(options.headers || {}) }
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Não foi possível concluir a ação.');
+                serverAvailable = true;
+                return data;
+            } catch (error) {
+                if (error.message === 'Senha incorreta.' || error.message.includes('administrador')) throw error;
+                serverAvailable = false;
+                throw new Error('Servidor PHP indisponível. Abra o site por index.php para sincronizar os comentários.');
+            }
+        }
+
+        function readLocalComments() {
+            try { return JSON.parse(localStorage.getItem(localCommentsKey) || '[]'); }
+            catch (error) { return []; }
+        }
+
+        function saveLocalComments(data) {
+            localStorage.setItem(localCommentsKey, JSON.stringify(data.slice(-50)));
         }
 
         adminToggle.addEventListener('click', async () => {
@@ -1545,8 +1563,15 @@
             try {
                 await requestAdmin('?action=login', { method: 'POST', body: JSON.stringify({ password }) });
                 adminMode = true;
+                localStorage.setItem('vertex-local-admin', 'true');
                 updateAdminMode();
             } catch (error) {
+                if (!serverAvailable && password === 'vertex-admin') {
+                    adminMode = true;
+                    localStorage.setItem('vertex-local-admin', 'true');
+                    updateAdminMode();
+                    return;
+                }
                 adminStatus.textContent = error.message;
             }
         });
@@ -1571,6 +1596,12 @@
 
             deleteButton.addEventListener('click', () => {
                 if (!adminMode || !window.confirm('Apagar este comentário?')) return;
+                if (!serverAvailable) {
+                    saveLocalComments(readLocalComments().filter(comment => comment.id !== id));
+                    card.remove();
+                    adminStatus.textContent = 'Comentário apagado neste navegador.';
+                    return;
+                }
                 requestAdmin(`?action=delete&id=${encodeURIComponent(id)}`, { method: 'DELETE' })
                     .then(() => { card.remove(); adminStatus.textContent = 'Comentário apagado.'; })
                     .catch(error => { adminStatus.textContent = error.message; });
@@ -1581,6 +1612,16 @@
                 const editedMessage = window.prompt('Edite o comentário:', currentMessage);
                 if (editedMessage === null || !editedMessage.trim()) return;
                 const cleanMessage = editedMessage.trim().slice(0, 420);
+                if (!serverAvailable) {
+                    const localComments = readLocalComments();
+                    const comment = localComments.find(item => item.id === id);
+                    if (comment) comment.message = cleanMessage;
+                    saveLocalComments(localComments);
+                    quote.textContent = `"${cleanMessage}"`;
+                    currentMessage = cleanMessage;
+                    adminStatus.textContent = 'Comentário editado neste navegador.';
+                    return;
+                }
                 requestAdmin(`?action=update&id=${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify({ message: cleanMessage }) })
                     .then(() => { quote.textContent = `"${cleanMessage}"`; currentMessage = cleanMessage; adminStatus.textContent = 'Comentário atualizado com sucesso.'; })
                     .catch(error => { adminStatus.textContent = error.message; });
@@ -1603,7 +1644,14 @@
         }
 
         async function loadTestimonials() {
-            const data = await requestAdmin('');
+            let data;
+            try {
+                data = await requestAdmin('');
+            } catch (error) {
+                serverAvailable = false;
+                data = { comments: readLocalComments(), admin: localStorage.getItem('vertex-local-admin') === 'true' };
+                testimonialStatus.textContent = 'Modo local ativo. Abra o site por index.php para sincronizar.';
+            }
             testimonialList.replaceChildren();
             data.comments.forEach(testimonial => {
                 testimonialList.append(createTestimonial(testimonial.id, testimonial.name, testimonial.message));
@@ -1619,10 +1667,16 @@
             if (!name || !message) return;
 
             try {
-                await requestAdmin('?action=create', { method: 'POST', body: JSON.stringify({ name, message }) });
+                if (serverAvailable) {
+                    await requestAdmin('?action=create', { method: 'POST', body: JSON.stringify({ name, message }) });
+                } else {
+                    const localComments = readLocalComments();
+                    localComments.push({ id: `local-${Date.now()}`, name, message });
+                    saveLocalComments(localComments);
+                }
                 await loadTestimonials();
                 testimonialForm.reset();
-                testimonialStatus.textContent = 'Obrigado. Seu depoimento foi publicado com sucesso.';
+                testimonialStatus.textContent = serverAvailable ? 'Obrigado. Seu depoimento foi publicado com sucesso.' : 'Comentário publicado neste navegador. Abra index.php para sincronizar.';
             } catch (error) {
                 testimonialStatus.textContent = error.message;
             }
